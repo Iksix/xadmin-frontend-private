@@ -1,11 +1,12 @@
 <script setup>
 import axios from "axios";
+axios.get('api/sanctum/csrf-cookie')
+
 import { onMounted, provide, ref } from "vue";
 import Header from "./components/Header.vue"
 import { useToast } from "vue-toastification";
 import successSound from './assets/sounds/success.wav';
 const playSounds = import.meta.env.VITE_PLAYSOUNDS
-console.log(playSounds);
 const toast = useToast();
 
 const CopiedToast = () => {
@@ -32,7 +33,50 @@ const CopiedToast = () => {
 });
 }
 
+const SuccessToast = (text) => {
+  if (playSounds == 'true')
+  {
+    let audio = new Audio(successSound);
+    audio.volume = 0.8
+    audio.play()
+  }
+  toast.success(text, {
+  position: "top-center",
+  timeout: 1800,
+  toastClassName: "custom-toast",
+  closeOnClick: true,
+  pauseOnFocusLoss: false,
+  pauseOnHover: false,
+  draggable: false,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: true,
+  hideProgressBar: false,
+  closeButton: "button",
+  icon: true,
+  rtl: false
+});
+}
+const ErrorToast = (text) => {
+  toast.error(text, {
+  position: "top-center",
+  timeout: 1800,
+  toastClassName: "custom-toast-error",
+  closeOnClick: true,
+  pauseOnFocusLoss: false,
+  pauseOnHover: false,
+  draggable: false,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: true,
+  hideProgressBar: false,
+  closeButton: "button",
+  icon: true,
+  rtl: false
+});
+}
+
 provide("CopiedToast", CopiedToast)
+provide("SuccessToast", SuccessToast)
+provide("ErrorToast", ErrorToast)
 
 
 
@@ -45,8 +89,7 @@ const admins = ref(null)
 onMounted(() => {
   // Получаем пользователя
   try {
-    axios.get('api/sanctum/csrf-cookie').then(async (r) => {
-      console.log(r);
+    axios.get('api/sanctum/csrf-cookie').then(async () => {
       axios.get('api/user').then((res) => {
         user.value = res.data
       })
@@ -60,7 +103,6 @@ onMounted(() => {
   try {
     axios.get('api/get/admins').then(async (r) => {
       admins.value = r.data
-      console.log(admins.value);
     });
   }
   catch (err) {
@@ -72,6 +114,11 @@ onMounted(() => {
 const UserHaveWebFlag = (user, flag) => {
   if (user == null) return false
   if (user.web_flags.includes(flag) || user.web_flags.includes('z')) return true
+  return false
+}
+const ThisUserHaveWebFlag = (flag) => {
+  if (this.user == null) return false
+  if (this.user.web_flags.includes(flag) || this.user.web_flags.includes('z')) return true
   return false
 }
 
@@ -93,7 +140,6 @@ const GetAdminNameBySid = (sid) => {
   }
 
   for (const admin in admins.value) {
-    console.log(`${admin} in admins`);
     if (admins.value[admin].sid == sid){
       return admins.value[admin].name
     }
@@ -156,7 +202,6 @@ const GetPagedMassive = (page, perPage, massive) => {
     
   }
 
-  console.log('return ', result);
   return result
 }
 
@@ -167,6 +212,7 @@ provide('GetPagedMassive', GetPagedMassive)
 provide('getDateString', getDateString)
 provide('convertMinutes', convertMinutes)
 provide('UserHaveWebFlag', UserHaveWebFlag)
+provide('ThisUserHaveWebFlag', ThisUserHaveWebFlag)
 provide('GetAdminBySid', GetAdminBySid)
 provide('GetAdminNameBySid', GetAdminNameBySid)
 

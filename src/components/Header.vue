@@ -4,6 +4,7 @@ import { inject } from 'vue';
 const SubFolder = import.meta.env.VITE_SUBFOLDER;
 console.log(SubFolder);
 const user = inject('user')
+const UserHaveWebFlag = inject('UserHaveWebFlag')
 
 
 </script>
@@ -21,6 +22,8 @@ const user = inject('user')
             <RouterLink :to="{name : 'bans'}">Bans</RouterLink>
             <RouterLink :to="{name : 'mutes'}">Mutes</RouterLink>
             <RouterLink :to="{name : 'gags'}">Gags</RouterLink>
+
+            <RouterLink v-if="UserHaveWebFlag(user, 'a')" :to="{name : 'adminpanel'}">Admin</RouterLink>
         </div>
         <div class="side">
             <RouterLink v-if="user != null" :to="{name : 'profile'}">Profile</RouterLink>

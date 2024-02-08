@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('iks_users', function (Blueprint $table) {
+        Schema::create('iks_servers', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
-            $table->string('steam_id');
-            $table->string('web_flags')->default('');
-            $table->string('avatar');
+            $table->string("name");
+            $table->string("ip");
+            $table->unsignedInteger("port");
+            $table->string("rcon");
+            $table->string("server_id");
 
-            $table->rememberToken();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('iks_users');
+        Schema::dropIfExists('iks_servers');
     }
 };

@@ -29,6 +29,11 @@ const routes = [
         component : () => import("../components/pages/Bans.vue")
     },
     {
+        name : "adminpanel",
+        path : `${prefix}/adminpanel`,
+        component : () => import("../components/pages/AdminPanel.vue")
+    },
+    {
         name : "NotFound",
         path : `${prefix}/*`,
         component : () => import("../components/pages/Home.vue")

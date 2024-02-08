@@ -1,10 +1,12 @@
 <script setup>
-import { ref, onMounted, inject} from 'vue';
+import { ref, onMounted, inject, provide} from 'vue';
 import BanItem from '../BanItem.vue';
 import axios from "axios";
 import BanInfo from '../BanInfo.vue';
-
+const SuccessToast = inject('SuccessToast');
+const ErrorToast = inject('ErrorToast');
 const user = inject('user');
+axios.get('api/sanctum/csrf-cookie')
 
 const bans = ref(null);
 
@@ -18,8 +20,7 @@ const maxPage = ref(1);
 const perPage = 7
 
 
-
-onMounted(() => {
+const SetBans = () => {
     try {
         axios.get('api/get/bans').then((res) => {
             bans.value = res.data.reverse() ?? null
@@ -27,9 +28,14 @@ onMounted(() => {
         });
     }
     catch (err) {
-        console.log(err);
+        axios.get('api/get/bans').then((res) => {
+            bans.value = res.data.reverse() ?? null
+            maxPage.value = Math.floor(bans.value.length / perPage - 1) 
+        });
     }
-})
+};
+
+SetBans()
 
 
 const PlusPage = () => {
@@ -43,6 +49,29 @@ const MinusPage = () => {
         page.value--
     }
 }
+
+
+const UnbanPlayer = () => 
+{
+    let arg = selectedBan.value.BanType == 0 ? selectedBan.value.sid : selectedBan.value.ip
+    console.log(selectedBan.value.server_id)
+    axios.post('api/unban', {arg : arg, server_id : selectedBan.value.server_id })
+    .then((res) => {
+        if (res.data == true)
+        {
+            SuccessToast("Player unbanned!")
+        }
+        if (res.data != true)
+        {
+            ErrorToast("Player not unbanned!")
+            console.log(res.data);
+        }
+        SetBans()
+        selectedBan.value = bans.value.find(x => x.id == selectedBan.value.id)
+    })
+}
+
+provide("UnbanPlayer", UnbanPlayer)
 
 
 </script>
@@ -59,8 +88,9 @@ const MinusPage = () => {
             </div>
             <template v-if="bans != null">
                 <BanItem 
-                @click="selectedBan = ban"
                 v-for="ban in GetPagedMassive(page, perPage, bans)"
+                @click="selectedBan = ban"
+                :class="{'selected' :  selectedBan != null && ban.id == selectedBan.id}"
                 :key="ban.id"
                 :ban="ban"
                 />

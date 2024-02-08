@@ -32,7 +32,7 @@ return [
     | token that's present on an incoming request for authentication.
     |
     */
-    'prefix' => env('APP_SUBFOLDER').'api',
+
     'guard' => ['web'],
 
     /*
@@ -45,7 +45,7 @@ return [
     | "expires_at" attribute, but first-party sessions are not affected.
     |
     */
-
+    'prefix' => env('APP_SUBFOLDER').'api/sanctum',
     'expiration' => null,
 
     /*

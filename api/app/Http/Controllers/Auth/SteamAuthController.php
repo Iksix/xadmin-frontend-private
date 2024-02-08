@@ -47,16 +47,17 @@ final class SteamAuthController
             true
         );
 
-        return $redirector->to('/'.env('APP_SUBFOLDER'));
+        return $redirector->to(env('STEAM_REDIRECT_URL'));
     }
 
     private function firstOrCreate(SteamUserDto $steamUser): User
     {
         return User::firstOrCreate([
-            'sid' => $steamUser->getSteamId(),
+            'steam_id' => $steamUser->getSteamId(),
         ], [
             'name' => $steamUser->getPersonaName(),
             'avatar' => $steamUser->getAvatarFull(),
+
         ]);
     }
 }

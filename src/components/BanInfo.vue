@@ -4,11 +4,17 @@ const CopyToClipboard = inject('CopyToClipboard');
 const GetAdminNameBySid = inject('GetAdminNameBySid');
 const convertMinutes = inject('convertMinutes');
 const getDateString = inject('getDateString');
+const UnbanPlayer = inject('UnbanPlayer')
+
+
+const user = inject('user');
 
 defineProps({
     'ban': Object || null
 })
 
+
+const UserHaveWebFlag = inject('UserHaveWebFlag')
 
 
 
@@ -62,6 +68,22 @@ defineProps({
                     <span class="property-name">Ban ends: </span>
                     <span class="property">{{ ban.time == 0 ? "Never" : getDateString(ban.end) }}</span>
                 </div>
+                <br>
+                <div class="section">
+                    <span class="property-name">Ban status: </span>
+                    <span class="property">{{ ((ban.end > Date.now() * 1000) || ban.time == 0) && ban.Unbanned == 0 ? "Active" : ban.Unbanned == 0 ? "Expired" : "Unbanned" }}</span>
+                </div>
+                <div v-if="ban.Unbanned == 1" class="section">
+                    <span class="property-name">Unbanned by: </span>
+                    <span class="property">{{ GetAdminNameBySid(ban.UnbannedBy) }}</span>
+                </div>
+                <br>
+                <div v-if="user != null" class="actions-section">
+                    <span v-if="UserHaveWebFlag(user, 'e') && (((ban.end > Date.now() * 1000) || ban.time == 0) && ban.Unbanned == 0)" class="action-btn edit">Edit</span>
+                    <span @click="UnbanPlayer()" v-if="UserHaveWebFlag(user, 'u') && (((ban.end > Date.now() * 1000) || ban.time == 0) && ban.Unbanned == 0)" class="action-btn unban">Unban</span>
+                    <span v-if="UserHaveWebFlag(user, 'b') && !(((ban.end > Date.now() * 1000) || ban.time == 0) && ban.Unbanned == 0)" class="action-btn ban-again">Ban again</span>
+                </div>
+                <br>
             </div>
         </div>
 </template>

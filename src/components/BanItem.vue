@@ -19,6 +19,8 @@ const getDateString = inject('getDateString');
         <span>{{ admin }}</span>
         <span>{{ ban['reason'] }}</span>
         <span>{{ ban.time == 0 ? "Infinity" : convertMinutes(ban.time / 60) }}</span>
-        <span :class="[{'banned' : ((Date.now() * 1000 < ban.end) || ban.time == 0) && ban.Unbanned == 0}, {'unbanned' : ((Date.now() * 1000 > ban.end) && ban.time != 0) || ban.Unbanned == 0}]">{{ getDateString(ban.created).split(',')[0] }}</span>
+        <span :class="[{'banned' : ((Date.now() * 1000 < ban.end) || ban.time == 0) && ban.Unbanned == 0}, 
+        {'unbanned' : ((Date.now() * 1000 > ban.end) && ban.time != 0) || ban.Unbanned ==1}]">
+        {{ getDateString(ban.created).split(',')[0] }}</span>
     </div>
 </template>

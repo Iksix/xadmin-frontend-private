@@ -12,4 +12,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get(env("APP_SUBFOLDER").'api/login', \App\Http\Controllers\Auth\SteamAuthController::class);
 
+Route::get('{any}', function () {
+    dd("404");
+})->where('any', '.*');
